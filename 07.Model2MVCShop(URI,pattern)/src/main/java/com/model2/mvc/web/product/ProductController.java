@@ -55,7 +55,7 @@ public class ProductController {
 		System.out.println("/product/addProduct : POST");
 		productService.addProduct(product);
 		
-		return "redirect:/getProduct.do?prodNo="+product.getProdNo();
+		return "redirect:/getProduct?prodNo="+product.getProdNo();
 	}
 	
 	//@RequestMapping("/getProduct.do")
@@ -94,7 +94,7 @@ public class ProductController {
 		
 		productService.updateProduct(product);
 		
-		return "redirect:/getProduct.do?prodNo="+product.getProdNo();
+		return "redirect:/getProduct?prodNo="+product.getProdNo();
 	}
 	
 	//@RequestMapping("/listProduct.do")

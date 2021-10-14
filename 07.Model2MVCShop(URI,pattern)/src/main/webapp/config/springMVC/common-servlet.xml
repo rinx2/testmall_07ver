@@ -42,6 +42,7 @@
    		<mvc:interceptor>
 			<mvc:mapping path="/user/**"/>
 			<mvc:mapping path="/product/**"/>
+			<mvc:mapping path="/purchase/**"/>
 			<bean class="com.model2.mvc.common.web.LogonCheckInterceptor" />
    		</mvc:interceptor>
 
