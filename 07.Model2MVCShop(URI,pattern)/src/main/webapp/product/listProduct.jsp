@@ -21,7 +21,7 @@
 
 <div style="width:98%; margin-left:10px;">
 
-<form name="detailForm" action="/product/listProduct?menu=search" method="post">
+<form name="detailForm" action="/listProduct.do?menu=search" method="post">
 
 <table width="100%" height="37" border="0" cellpadding="0"	cellspacing="0">
 	<tr>
@@ -64,7 +64,7 @@
 						<img src="/images/ct_btnbg01.gif" width="17" height="23">
 					</td>
 					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top:3px;">
-						<a href="javascript:fncGetUserList('1');">검색</a>
+						<a href="javascript:fncGetProductList('1');">검색</a>
 					</td>
 					<td width="14" height="23">
 						<img src="/images/ct_btnbg03.gif" width="14" height="23">
@@ -99,7 +99,7 @@
 		<tr class="ct_list_pop">
 			<td align="center">${ i }</td>
 			<td></td>
-			<td align="left"><a href="/product/getProduct?prodNo=${ product.prodNo }">${ product.prodName }</a></td>
+			<td align="left"><a href="/getProduct.do?prodNo=${ product.prodNo }&menu=search">${ product.prodName }</a></td>
 			<td></td>
 			<td align="left">${ product.price }</td>
 			<td></td>

@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,6 +22,7 @@ import com.model2.mvc.service.product.ProductService;
 @Controller
 @RequestMapping("/product/*")
 public class ProductController {
+	
 	///Field
 	@Autowired
 	@Qualifier("productServiceImpl")
@@ -38,9 +38,9 @@ public class ProductController {
 	@Value("#{commonProperties['pageSize']}")
 	int pageSize;
 	
+	
 	//@RequestMapping("/addProductView.do")
-	//public String addProductView() {
-	@RequestMapping(value="addProduct", method=RequestMethod.GET)
+	@RequestMapping( value="addProduct", method=RequestMethod.GET )
 	public String addProduct() {
 		
 		System.out.println("/product/addProduct : GET");
@@ -49,19 +49,19 @@ public class ProductController {
 	}
 	
 	//@RequestMapping("/addProduct.do")
-	@RequestMapping(value="addProduct", method=RequestMethod.POST)
+	@RequestMapping( value="addProduct", method=RequestMethod.POST )
 	public String addProduct(@ModelAttribute("product") Product product) throws Exception {
 		
 		System.out.println("/product/addProduct : POST");
 		productService.addProduct(product);
 		
-		return "redirect:/getProduct?prodNo="+product.getProdNo();
+		//return "redirect:/getProduct.do?prodNo="+product.getProdNo();
+		return "redirect:/product/getProduct?prodNo="+product.getProdNo();
 	}
 	
 	//@RequestMapping("/getProduct.do")
-	//public String getProduct(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
-	@RequestMapping(value="getProduct/{prodNo}", method=RequestMethod.GET)
-	public String getProduct(@PathVariable int prodNo, Model model) throws Exception {
+	@RequestMapping( value="getProduct", method=RequestMethod.GET )
+	public String getProduct(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
 		
 		System.out.println("/product/getProduct : GET");
 		
@@ -72,10 +72,8 @@ public class ProductController {
 	}
 	
 	//@RequestMapping("/updateProductView.do")
-	//public String updateProductView(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
-	@RequestMapping(value="updateProduct/{prodNo}", method=RequestMethod.GET)
-	public String updateProduct(@PathVariable int prodNo, Model model) throws Exception {
-		//위의 getProduct와 기능 같음 그러나 접근 경로는 getProduct 뒤에 해당 기능 접근 가능
+	@RequestMapping( value="updateProduct", method=RequestMethod.GET )
+	public String updateProduct(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
 		
 		System.out.println("/product/updateProduct : GET");
 		
@@ -86,19 +84,19 @@ public class ProductController {
 	}
 	
 	//@RequestMapping("/updateProduct.do")
-	//public String updateProduct(@ModelAttribute("product") Product product, Model model) throws Exception {
-	@RequestMapping(value="updateProduct", method=RequestMethod.POST)
+	@RequestMapping( value="updateProduct", method=RequestMethod.POST )
 	public String updateProduct(@ModelAttribute("product") Product product, Model model) throws Exception {
 		
 		System.out.println("/product/updateProduct : POST");
 		
 		productService.updateProduct(product);
 		
-		return "redirect:/getProduct?prodNo="+product.getProdNo();
+		//return "redirect:/getProduct.do?prodNo="+product.getProdNo();
+		return "redirect:/product/getProduct?prodNo="+product.getProdNo();
 	}
 	
 	//@RequestMapping("/listProduct.do")
-	@RequestMapping(value="listProduct")
+	@RequestMapping( value="listProduct" )
 	public String listProduct(@ModelAttribute("search") Search search, Model model, HttpServletRequest request) throws Exception {
 		
 		System.out.println("/product/listProduct : GET / POST");

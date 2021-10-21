@@ -125,7 +125,7 @@
 							<a href="/purchase/addPurchase.jsp">구매</a>
 						</c:if>
 						<c:if test="${user.role == 'admin'}">
-							<a href="/product/updateProduct?prodNo=${product.prodNo}">수정</a>
+							<a href="/updateProductView.do?prodNo=${product.prodNo}">수정</a>
 						</c:if>
 					</td>
 					<td width="14" height="23">
@@ -136,7 +136,7 @@
 						<img src="/images/ct_btnbg01.gif" width="17" height="23">
 					</td>
 					<td background="/images/ct_btnbg02.gif" class="ct_btn01" style="padding-top:3px;">
-						<a href="/listProduct?menu=manage">확인</a>
+						<a href="/listProduct.do?menu=manage">확인</a>
 				</td>			
 			</tr>
 		</table>

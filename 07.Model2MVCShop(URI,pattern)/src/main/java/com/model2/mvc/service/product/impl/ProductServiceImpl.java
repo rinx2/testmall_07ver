@@ -27,9 +27,8 @@ public class ProductServiceImpl implements ProductService {
 
 	///Constructor
 	public ProductServiceImpl() {
-		System.out.println(this.getClass());
 	}
-	
+
 	///Method
 	@Override
 	public void addProduct(Product product) throws Exception {

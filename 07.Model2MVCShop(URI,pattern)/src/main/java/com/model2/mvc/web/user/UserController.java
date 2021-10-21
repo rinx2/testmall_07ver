@@ -144,6 +144,7 @@ public class UserController {
 		return "redirect:/index.jsp";
 	}
 	
+	
 	//@RequestMapping("/checkDuplication.do")
 	@RequestMapping( value="checkDuplication", method=RequestMethod.POST )
 	public String checkDuplication( @RequestParam("userId") String userId , Model model ) throws Exception{
