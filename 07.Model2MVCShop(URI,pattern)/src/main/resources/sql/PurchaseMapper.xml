@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PurchaseMapper">
+
+	<resultMap type="purchase" id="purchaseSelectMap">
+		<result property="tranNo" 				column="TRAN_NO" 		jdbcType="INTEGER"/>
+  		<result property="purchaseProd.prodNo" 	column="PROD_NO" 		jdbcType="INTEGER"/>
+  		<result property="buyer.userId" 		column="BUYER_ID"		jdbcType="VARCHAR"/>
+  		<result property="paymentOption"		column="PAYMENT_OPTION" jdbcType="CHAR"/>
+  		<result property="receiverName" 		column="RECEIVER_NAME" 	jdbcType="VARCHAR"/>
+  		<result property="receiverPhone" 		column="RECEIVER_PHONE" jdbcType="VARCHAR"/>
+  		<result property="divyAddr" 			column="DLVY_ADDR" 		jdbcType="VARCHAR"/>
+  		<result property="divyRequest" 			column="DLVY_REQUEST" 	jdbcType="VARCHAR"/>
+  		<result property="tranCode" 			column="TRAN_STATUS_CODE" 	jdbcType="CHAR"/>
+  		<result property="orderDate" 			column="ORDER_DATE" 		jdbcType="DATE"/>  		 
+  		<result property="divyDate" 			column="DLVY_DATE"		jdbcType="DATE"/>
+  	</resultMap>
+  	
+	<insert id="addPurchase" parameterType="purchase">
+		INSERT 
+		INTO transaction(tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, tran_status_code, order_data, dlvy_date)
+		VALUES (
+					seq_transaction_tran_no.NEXTVAL,
+					#{purchaseProd.prodNo:INTEGER},
+					#{buyer.userId:VARCHAR},
+					#{paymentOption:CHAR},
+					#{receiverName:VARCHAR},
+					#{receiverPhone:VARCHAR},
+					#{divyAddr:VARCHAR},
+					#{divyRequest:VARCHAR},
+					#{tranCode:CHAR},
+					SYSDATE,
+					#{divyDate:DATE} )
+	</insert>
+	
+	<select id="getPurchase" parameterType="int" resultMap="purchaseSelectMap">
+  		SELECT 
+		prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, dlvy_date, order_date, tran_status_code, tran_no
+		FROM transaction
+		WHERE tran_no = #{tranNo}
+  	</select>
+
+	<select id="getPurchase2" parameterType="int" resultMap="purchaseSelectMap">
+  		SELECT 
+		prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, dlvy_date, order_date, tran_status_code, tran_no
+		FROM transaction
+		WHERE prod_no = #{purchaseProd.prodNo}
+  	</select>
+  	
+  	<update id="updatePurchase" parameterType="purchase">
+  		UPDATE transaction
+  		<set>
+  			receiver_name = #{receiverName:VARCHAR},
+  			receiver_phone = #{receiverPhone:VARCHAR},
+  			demailaddr = #{divyAddr:VARCHAR},
+  			dlvy_request = #{divyRequest:VARCHAR},
+  			dlvy_date = #{divyDate:DATE}
+  		</set>
+  		WHERE tran_no = #{tranNo}
+  	</update>
+  	
+  	<update id="updateTranCode" parameterType="purchase">
+  		UPDATE transaction
+  		<set>
+  			tran_status_code = #{tran_status_code}+1
+  		</set>
+  		WHERE tran_no = #{tranNo}
+  	</update>
+  	
+  	<select id="getPurchaseList" parameterType="search" resultMap="purchaseSelectMap">
+  		SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+	  					FROM		(	SELECT t.tran_no , p.prod_no, p.prod_name
+											FROM transaction t, product p
+											<if test="searchCondition != null">
+												<where>
+														t.prod_no = p.prod_no
+													<if test="searchCondition == 0 and searchKeyword !='' ">
+										 				tran_no = #{searchKeyword}
+													</if>
+													<if test="searchCondition == 1 and searchKeyword !='' ">
+										 				prod_no = #{searchKeyword}
+													</if>
+													<if test="searchCondition == 2 and searchKeyword !='' ">
+										 				tran_status_code = #{searchKeyword}
+													</if>
+												</where>
+											</if>
+											ORDER BY tran_no ) inner_table
+						WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+  	</select>
+  	
+  	<!-- SQL : SELECT ROW Count -->	 
+	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(	SELECT prod_no , prod_name , price
+						FROM product
+						<if test="searchCondition != null">
+							<where>
+								<if test="searchCondition == 0 and searchKeyword !='' ">
+					 				prod_no = #{searchKeyword}
+								</if>
+								<if test="searchCondition == 1 and searchKeyword !='' ">
+					 				prod_name = #{searchKeyword}
+								</if>
+								<if test="searchCondition == 2 and searchKeyword !='' ">
+					 				price = #{searchKeyword}
+								</if>
+							</where>
+						</if> ) countTable						
+	 </select>
+</mapper>
+
+
+
+
+
