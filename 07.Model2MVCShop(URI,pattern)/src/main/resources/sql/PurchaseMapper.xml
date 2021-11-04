@@ -66,7 +66,7 @@
   	<update id="updateTranCode" parameterType="purchase">
   		UPDATE transaction
   		<set>
-  			tran_status_code = #{tran_status_code}+1
+  			tran_status_code+1
   		</set>
   		WHERE tran_no = #{tranNo}
   	</update>
@@ -74,22 +74,47 @@
   	<select id="getPurchaseList" parameterType="search" resultMap="purchaseSelectMap">
   		SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
-	  					FROM		(	SELECT t.tran_no , p.prod_no, p.prod_name
-											FROM transaction t, product p
-											<if test="searchCondition != null">
-												<where>
-														t.prod_no = p.prod_no
+	  					FROM		(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, u.user_id, t.receiver_name, t.receiver_phone, t.tran_status_code 
+											FROM transaction t, product p, users u
+											<where>
+												t.prod_no = p.prod_no,
+												t.buyer_id = u.user_id,
+												<if test="searchCondition != null">
 													<if test="searchCondition == 0 and searchKeyword !='' ">
-										 				tran_no = #{searchKeyword}
+										 				t.tran_no = #{searchKeyword}
 													</if>
 													<if test="searchCondition == 1 and searchKeyword !='' ">
-										 				prod_no = #{searchKeyword}
+										 				p.prod_no = #{searchKeyword}
 													</if>
 													<if test="searchCondition == 2 and searchKeyword !='' ">
-										 				tran_status_code = #{searchKeyword}
+										 				t.tran_status_code = #{searchKeyword}
 													</if>
-												</where>
-											</if>
+												</if>
+											</where>
+											ORDER BY tran_no ) inner_table
+						WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
+  	</select>
+  	
+  	<select id="getSaleList" parameterType="search" resultMap="purchaseSelectMap">
+  		SELECT *
+	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
+	  					FROM		(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, p.reg_date, t.tran_status_code
+											FROM transaction t, product p
+											<where>
+												t.prod_no = p.prod_no
+												<if test="searchCondition != null">
+													<if test="searchCondition == 0 and searchKeyword !='' ">
+										 				t.tran_no = #{searchKeyword}
+													</if>
+													<if test="searchCondition == 1 and searchKeyword !='' ">
+										 				p.prod_no = #{searchKeyword}
+													</if>
+													<if test="searchCondition == 2 and searchKeyword !='' ">
+										 				t.tran_status_code = #{searchKeyword}
+													</if>
+												</if>
+											</where>
 											ORDER BY tran_no ) inner_table
 						WHERE ROWNUM &lt;= #{endRowNum} )
 		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
@@ -98,21 +123,22 @@
   	<!-- SQL : SELECT ROW Count -->	 
 	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
 	  	SELECT COUNT(*)
-	  	FROM(	SELECT prod_no , prod_name , price
-						FROM product
-						<if test="searchCondition != null">
-							<where>
+	  	FROM(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, p.reg_date, t.tran_status_code
+						FROM transaction t, product p
+						<where>
+							t.prod_no = p.prod_no
+							<if test="searchCondition != null">
 								<if test="searchCondition == 0 and searchKeyword !='' ">
-					 				prod_no = #{searchKeyword}
+					 				t.tran_no = #{searchKeyword}
 								</if>
 								<if test="searchCondition == 1 and searchKeyword !='' ">
-					 				prod_name = #{searchKeyword}
+					 				p.prod_no = #{searchKeyword}
 								</if>
 								<if test="searchCondition == 2 and searchKeyword !='' ">
-					 				price = #{searchKeyword}
+					 				t.tran_status_code = #{searchKeyword}
 								</if>
-							</where>
-						</if> ) countTable						
+							</if>
+						</where>) countTable						
 	 </select>
 </mapper>
 

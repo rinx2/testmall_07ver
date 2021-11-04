@@ -99,7 +99,7 @@
 		<tr class="ct_list_pop">
 			<td align="center">${ i }</td>
 			<td></td>
-			<td align="left"><a href="/getProduct.do?prodNo=${ product.prodNo }&menu=search">${ product.prodName }</a></td>
+			<td align="left"><a href="/product/getProduct?prodNo=${ product.prodNo }">${ product.prodName }</a></td>
 			<td></td>
 			<td align="left">${ product.price }</td>
 			<td></td>
