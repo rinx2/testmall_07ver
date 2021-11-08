@@ -1,5 +1,4 @@
 /com/
 /config/
+/log4j.properties
 /sql/
-/PurchaseService.class
-/PurchaseServiceImpl.class
