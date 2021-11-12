@@ -64,7 +64,13 @@ public class PurchaseDaoImpl implements PurchaseDao {
 	}
 
 	@Override
-	public int getTotalCount(Search search) throws Exception {
-		return sqlSession.selectOne("ProductMapper.getTotalCount", search);
+	public int getTotalCountForPurchaseList(Search search) throws Exception {
+		return sqlSession.selectOne("PurchaseMapper.getTotalCountForPurchaseList", search);
 	}
+
+	@Override
+	public int getTotalCountForSaleList(Search search) throws Exception {
+		return sqlSession.selectOne("PurchaseMapper.getTotalCountForSaleList", search);
+	}
+
 }

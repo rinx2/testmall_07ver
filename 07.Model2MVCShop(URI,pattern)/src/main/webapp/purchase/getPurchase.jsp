@@ -1,11 +1,6 @@
 <%@ page contentType="text/html; charset=euc-kr" %>
 <%@ page import="com.model2.mvc.service.domain.*" %>
-<% 
-Purchase purchase = (Purchase)request.getAttribute("purchase");
-
-%>
-
-
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <html>
 <head>
@@ -73,7 +68,12 @@ Purchase purchase = (Purchase)request.getAttribute("purchase");
 		<td width="104" class="ct_write">구매방법</td>
 		<td bgcolor="D6D6D6" width="1"></td>
 		<td class="ct_write01">
-			${purchase.paymentOption}
+			<c:if test= "${purchase.paymentOption == '1  '}">
+			현금구매
+			</c:if>
+			<c:if test= "${purchase.paymentOption == '2  '}">
+			카드구매
+			</c:if>
 		</td>
 	</tr>
 	<tr>

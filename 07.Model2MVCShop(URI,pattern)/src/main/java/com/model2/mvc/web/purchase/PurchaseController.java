@@ -2,6 +2,7 @@ package com.model2.mvc.web.purchase;
 
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,16 +58,27 @@ public class PurchaseController {
 	}
 	
 	@RequestMapping(value="addPurchase", method=RequestMethod.POST)
-	public String addPurchase(@ModelAttribute("purchase") Purchase purchase) throws Exception {
-		
+	public String addPurchase(@ModelAttribute("purchase") Purchase purchase, @RequestParam("prodNo") int prodNo, Model model, HttpSession session) throws Exception {
+
 		System.out.println("/purchase/addPurchase : POST");
+		
+		User user = (User) session.getAttribute("user");
+		Product product = productService.getProduct(prodNo);
+
+		purchase.setBuyer(user);
+		purchase.setPurchaseProd(product);
+		
+		System.out.println("DAOImpl purchase: "+purchase.toString());
+
 		purchaseService.addPurchase(purchase);
+		model.addAttribute("purchase", purchase);
 		
 		return "redirect:/purchase/addPurchase.jsp";
 	}
 	
 	@RequestMapping(value="listPurchase")
-	public String listPurchase(@ModelAttribute("search") Search search, Model model, HttpSession session) throws Exception {
+	public String listPurchase(@ModelAttribute("search") Search search, Model model, HttpSession session, HttpServletRequest request) throws Exception {
+		
 		System.out.println("/purchase/listPurchase : GET/POST");
 		
 		String buyerId = ((User)session.getAttribute("user")).getUserId();
@@ -89,5 +101,91 @@ public class PurchaseController {
 		return "forward:/purchase/listPurchase.jsp";
 	}
 	
+	@RequestMapping(value="listSale")
+	public String listSale(@ModelAttribute("search") Search search, Model model, HttpServletRequest request) throws Exception {
 
+		System.out.println("/purchase/listSale : GET/POST");
+
+		if(search.getCurrentPage() ==0 ){
+			search.setCurrentPage(1);
+		}
+		search.setPageSize(pageSize);
+		
+		Map<String, Object> map = purchaseService.getSaleList(search);
+				
+		Page resultPage = new Page( search.getCurrentPage(), ((Integer)map.get("totalCount")).intValue(), pageUnit, pageSize);
+		System.out.println(resultPage);
+		
+		// Model °ú View ¿¬°á
+		model.addAttribute("list", map.get("list"));
+		model.addAttribute("resultPage", resultPage);
+		model.addAttribute("search", search);
+		
+		return "forward:/purchase/listSale.jsp";
+	}
+	
+	@RequestMapping(value="getPurchase", method=RequestMethod.GET)
+	public String getPurchase(@RequestParam("tranNo") int tranNo, Model model) throws Exception {
+		
+		System.out.println("/purchase/getPurchase?tranNo= : GET");
+		
+		Purchase purchase = purchaseService.getPurchase(tranNo);
+		model.addAttribute("purchase", purchase);
+		
+		return "forward:/purchase/getPurchase.jsp";
+	}
+	
+	@RequestMapping(value="getPurchaseByProdNo", method=RequestMethod.GET)
+	public String getPurchase2(@RequestParam("prodNo") int prodNo, Model model) throws Exception {
+		
+		System.out.println("/purchase/getPurchase?prodNo= : GET");
+		
+		Purchase purchase = purchaseService.getPurchase2(prodNo);
+		model.addAttribute("purchase", purchase);
+		
+		return "forward:/purchase/getPurchase.jsp";
+	}
+	
+	@RequestMapping(value="updatePurchase", method=RequestMethod.GET)
+	public String updatePurchase(@RequestParam("tranNo") int tranNo, Model model) throws Exception {
+		
+		System.out.println("/purchase/updatePurchase : GET");
+		
+		Purchase purchase = purchaseService.getPurchase(tranNo);
+		model.addAttribute("purchase", purchase);
+		
+		return "forward:/purchase/updatePurchaseView.jsp";
+	}
+	
+	@RequestMapping(value="updatePurchase", method=RequestMethod.POST)
+	public String updatePurchase(@ModelAttribute("purchase") Purchase purchase, Model model) throws Exception {
+		
+		System.out.println("/purchase/updatePurchase : POST");
+		System.out.println(purchase.toString());
+		
+		purchaseService.updatePurcahse(purchase);
+		Purchase returnPurchase = purchaseService.getPurchase(purchase.getTranNo());
+		model.addAttribute("purchase", returnPurchase);
+		
+		return "forward:/purchase/getPurchase.jsp";
+	}
+	
+	@RequestMapping(value="updateTranCode", method=RequestMethod.GET)
+	public String updateTranCode(@RequestParam("tranCode") String tranCode, @RequestParam("tranNo") int tranNo) throws Exception {
+		
+		System.out.println("purchase/updateTranCode : GET");
+		
+		Purchase purchase = purchaseService.getPurchase(tranNo);
+		
+		if( tranCode != null && !(tranCode.equals("003")) ) {
+			if(tranCode == "001") {
+				purchase.setTranCode("002");
+				
+			} else if(tranCode == "002") {
+				purchase.setTranCode("003");
+			}	
+			purchaseService.updateTranCode(purchase);
+		}
+		return "forward:/purchase/listPurchase.jsp";
+	}
 }

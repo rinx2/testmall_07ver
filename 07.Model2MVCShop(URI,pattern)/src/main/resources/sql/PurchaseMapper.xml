@@ -20,6 +20,17 @@
   		<result property="divyDate" 			column="DLVY_DATE"		jdbcType="DATE"/>
   	</resultMap>
   	
+  	<resultMap id="productSelectMap" type="product">
+		<result property="prodNo" 			column="prod_no" 			jdbcType="INTEGER"/>
+		<result property="prodName"	column="prod_name" 		jdbcType="VARCHAR" />
+		<result property="prodDetail" 	column="prod_detail" 		jdbcType="VARCHAR" />
+		<result property="manuDate" 				column="manufacture_day" 					jdbcType="VARCHAR" />
+		<result property="price" 				column="price" 					jdbcType="INTEGER" />
+		<result property="fileName" 			column="image_file" 		jdbcType="VARCHAR" />
+		<result property="regDate" 		column="reg_date" 			jdbcType="DATE" />
+		<result property="proTranCode" 		column="tran_status_code" 			jdbcType="VARCHAR" />
+	</resultMap>
+  	
 	<insert id="addPurchase" parameterType="purchase">
 		INSERT 
 		INTO transaction(tran_no, prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, tran_status_code, order_data, dlvy_date)
@@ -32,21 +43,21 @@
 					#{receiverPhone:VARCHAR},
 					#{divyAddr:VARCHAR},
 					#{divyRequest:VARCHAR},
-					#{tranCode:CHAR},
+					'001',
 					SYSDATE,
 					#{divyDate:DATE} )
 	</insert>
 	
 	<select id="getPurchase" parameterType="int" resultMap="purchaseSelectMap">
   		SELECT 
-		prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, dlvy_date, order_date, tran_status_code, tran_no
+		prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, dlvy_date, order_data, tran_status_code, tran_no
 		FROM transaction
 		WHERE tran_no = #{tranNo}
   	</select>
 
 	<select id="getPurchase2" parameterType="int" resultMap="purchaseSelectMap">
   		SELECT 
-		prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, dlvy_date, order_date, tran_status_code, tran_no
+		prod_no, buyer_id, payment_option, receiver_name, receiver_phone, demailaddr, dlvy_request, dlvy_date, order_data, tran_status_code, tran_no
 		FROM transaction
 		WHERE prod_no = #{purchaseProd.prodNo}
   	</select>
@@ -66,7 +77,7 @@
   	<update id="updateTranCode" parameterType="purchase">
   		UPDATE transaction
   		<set>
-  			tran_status_code+1
+  			tran_status_code = #{tranCode}
   		</set>
   		WHERE tran_no = #{tranNo}
   	</update>
@@ -74,20 +85,21 @@
   	<select id="getPurchaseList" parameterType="search" resultMap="purchaseSelectMap">
   		SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
-	  					FROM		(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, u.user_id, t.receiver_name, t.receiver_phone, t.tran_status_code 
+	  					FROM		(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, t.buyer_id, t.receiver_name, t.receiver_phone, t.tran_status_code 
 											FROM transaction t, product p, users u
 											<where>
-												t.prod_no = p.prod_no,
-												t.buyer_id = u.user_id,
+												t.prod_no = p.prod_no
+												AND t.buyer_id = u.user_id
+												AND t.buyer_id = #{searchKeywordInPurchase}
 												<if test="searchCondition != null">
 													<if test="searchCondition == 0 and searchKeyword !='' ">
-										 				t.tran_no = #{searchKeyword}
+										 				AND t.tran_no = #{searchKeyword}
 													</if>
 													<if test="searchCondition == 1 and searchKeyword !='' ">
-										 				p.prod_no = #{searchKeyword}
+										 				AND p.prod_no = #{searchKeyword}
 													</if>
 													<if test="searchCondition == 2 and searchKeyword !='' ">
-										 				t.tran_status_code = #{searchKeyword}
+										 				AND t.tran_status_code = #{searchKeyword}
 													</if>
 												</if>
 											</where>
@@ -96,22 +108,23 @@
 		WHERE row_seq BETWEEN #{startRowNum} AND #{endRowNum}
   	</select>
   	
-  	<select id="getSaleList" parameterType="search" resultMap="purchaseSelectMap">
+  	<select id="getSaleList" parameterType="search" resultMap="productSelectMap">
   		SELECT *
 	  	FROM (	SELECT inner_table.* , ROWNUM AS row_seq
 	  					FROM		(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, p.reg_date, t.tran_status_code
 											FROM transaction t, product p
 											<where>
 												t.prod_no = p.prod_no
+												AND t.tran_status_code NOT IN ('003')
 												<if test="searchCondition != null">
 													<if test="searchCondition == 0 and searchKeyword !='' ">
-										 				t.tran_no = #{searchKeyword}
+										 				AND t.tran_no = #{searchKeyword}
 													</if>
 													<if test="searchCondition == 1 and searchKeyword !='' ">
-										 				p.prod_no = #{searchKeyword}
+										 				AND p.prod_no = #{searchKeyword}
 													</if>
 													<if test="searchCondition == 2 and searchKeyword !='' ">
-										 				t.tran_status_code = #{searchKeyword}
+										 				AND t.tran_status_code = #{searchKeyword}
 													</if>
 												</if>
 											</where>
@@ -121,12 +134,36 @@
   	</select>
   	
   	<!-- SQL : SELECT ROW Count -->	 
-	 <select  id="getTotalCount"  parameterType="search"	 resultType="int">
+	 <select  id="getTotalCountForPurchaseList"  parameterType="search"	 resultType="int">
+	  	SELECT COUNT(*)
+	  	FROM(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, p.reg_date, t.tran_status_code
+						FROM transaction t, product p, users u
+						<where>
+							t.prod_no = p.prod_no
+							AND t.buyer_id = u.user_id
+							AND t.buyer_id = #{searchKeywordInPurchase}
+							<if test="searchCondition != null">
+								<if test="searchCondition == 0 and searchKeyword !='' ">
+					 				AND t.tran_no = #{searchKeyword}
+								</if>
+								<if test="searchCondition == 1 and searchKeyword !='' ">
+					 				AND p.prod_no = #{searchKeyword}
+								</if>
+								<if test="searchCondition == 2 and searchKeyword !='' ">
+					 				AND t.tran_status_code = #{searchKeyword}
+								</if>
+							</if>
+						</where>) countTable						
+	 </select>
+	 
+	 <!-- SQL : SELECT ROW Count -->	 
+	 <select  id="getTotalCountForSaleList"  parameterType="search"	 resultType="int">
 	  	SELECT COUNT(*)
 	  	FROM(	SELECT t.tran_no , p.prod_no, p.prod_name, p.price, p.reg_date, t.tran_status_code
 						FROM transaction t, product p
 						<where>
 							t.prod_no = p.prod_no
+							AND t.tran_status_code NOT IN ('003')
 							<if test="searchCondition != null">
 								<if test="searchCondition == 0 and searchKeyword !='' ">
 					 				t.tran_no = #{searchKeyword}
