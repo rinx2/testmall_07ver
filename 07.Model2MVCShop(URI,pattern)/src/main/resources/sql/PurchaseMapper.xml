@@ -13,7 +13,7 @@
   		<result property="paymentOption"		column="PAYMENT_OPTION" jdbcType="CHAR"/>
   		<result property="receiverName" 		column="RECEIVER_NAME" 	jdbcType="VARCHAR"/>
   		<result property="receiverPhone" 		column="RECEIVER_PHONE" jdbcType="VARCHAR"/>
-  		<result property="divyAddr" 			column="DLVY_ADDR" 		jdbcType="VARCHAR"/>
+  		<result property="divyAddr" 			column="DEMAILADDR" 	jdbcType="VARCHAR"/>
   		<result property="divyRequest" 			column="DLVY_REQUEST" 	jdbcType="VARCHAR"/>
   		<result property="tranCode" 			column="TRAN_STATUS_CODE" 	jdbcType="CHAR"/>
   		<result property="orderDate" 			column="ORDER_DATE" 	jdbcType="DATE"/>  		 

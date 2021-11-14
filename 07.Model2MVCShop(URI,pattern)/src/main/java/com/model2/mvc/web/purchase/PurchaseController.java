@@ -161,13 +161,14 @@ public class PurchaseController {
 	public String updatePurchase(@ModelAttribute("purchase") Purchase purchase, Model model) throws Exception {
 		
 		System.out.println("/purchase/updatePurchase : POST");
+		model.getAttribute("purchase");
 		System.out.println(purchase.toString());
 		
 		purchaseService.updatePurcahse(purchase);
 		Purchase returnPurchase = purchaseService.getPurchase(purchase.getTranNo());
 		model.addAttribute("purchase", returnPurchase);
 		
-		return "forward:/purchase/getPurchase.jsp";
+		return "forward:/purchase/updatePurchase.jsp";
 	}
 	
 	@RequestMapping(value="updateTranCodeByProd", method=RequestMethod.GET)

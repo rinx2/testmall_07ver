@@ -106,7 +106,7 @@
 			<td align="left">${ product.regDate }</td>
 			<td></td>
 			<td align="left">
-			판매모듈 구현전(제품 재고 파악 필요)
+			판매중
 			</td>
 		</tr>
 	</c:forEach>
