@@ -16,6 +16,8 @@ public class Purchase {
 	private String receiverPhone;
 	private String tranCode;
 	private int tranNo;
+	private int price;
+	private String prodName;
 	
 	public Purchase(){
 	}
@@ -85,8 +87,20 @@ public class Purchase {
 	}
 	public void setTranNo(int tranNo) {
 		this.tranNo = tranNo;
+	}	
+	public int getPrice() {
+		return price;
 	}
-	
+	public void setPrice(int price) {
+		this.price = price;
+	}
+	public String getProdName() {
+		return prodName;
+	}
+	public void setProdName(String prodName) {
+		this.prodName = prodName;
+	}
+
 	@Override
 	public String toString() {
 		return "PurchaseVO [buyer=" + buyer + ", divyAddr=" + divyAddr

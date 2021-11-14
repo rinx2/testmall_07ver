@@ -170,6 +170,24 @@ public class PurchaseController {
 		return "forward:/purchase/getPurchase.jsp";
 	}
 	
+	@RequestMapping(value="updateTranCodeByProd", method=RequestMethod.GET)
+	public String updateTranCodeByProd(@RequestParam("tranCode") String tranCode, @RequestParam("tranNo") int tranNo) throws Exception {
+		
+		System.out.println("purchase/updateTranCodeByProd : GET");
+		
+		Purchase purchase = purchaseService.getPurchase(tranNo);
+		
+		if( purchase.getTranCode() != null && !(purchase.getTranCode().equals("003")) ) {
+			if(purchase.getTranCode().equals("001")) {
+				purchase.setTranCode("002");
+			} else if(purchase.getTranCode().equals("002")) {
+				purchase.setTranCode("003");
+			}	
+			purchaseService.updateTranCode(purchase);
+		}
+		return "redirect:/purchase/listSale";
+	}
+
 	@RequestMapping(value="updateTranCode", method=RequestMethod.GET)
 	public String updateTranCode(@RequestParam("tranCode") String tranCode, @RequestParam("tranNo") int tranNo) throws Exception {
 		
@@ -177,15 +195,11 @@ public class PurchaseController {
 		
 		Purchase purchase = purchaseService.getPurchase(tranNo);
 		
-		if( tranCode != null && !(tranCode.equals("003")) ) {
-			if(tranCode == "001") {
-				purchase.setTranCode("002");
-				
-			} else if(tranCode == "002") {
+		if( purchase.getTranCode() != null && purchase.getTranCode().equals("002") ) {
 				purchase.setTranCode("003");
+				purchaseService.updateTranCode(purchase);
 			}	
-			purchaseService.updateTranCode(purchase);
-		}
-		return "forward:/purchase/listPurchase.jsp";
+	
+		return "redirect:/purchase/listPurchase";
 	}
 }

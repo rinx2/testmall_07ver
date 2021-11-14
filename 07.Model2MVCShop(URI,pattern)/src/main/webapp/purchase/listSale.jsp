@@ -4,7 +4,7 @@
 
 <html>
 <head>
-<title>구매 목록조회</title>
+<title>판매목록조회</title>
 
 <link rel="stylesheet" href="/css/admin.css" type="text/css">
 
@@ -28,7 +28,7 @@
 		<td background="/images/ct_ttl_img02.gif" width="100%" style="padding-left: 10px;">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td width="93%" class="ct_ttl01">구매 목록조회</td>
+					<td width="93%" class="ct_ttl01">판매목록조회</td>
 				</tr>
 			</table>
 		</td>
@@ -76,25 +76,27 @@
 		<td class="ct_line02"></td>
 		<td class="ct_list_b" width="150">가격</td>
 		<td class="ct_line02"></td>
-		<td class="ct_list_b">등록일</td>	
+		<td class="ct_list_b">구매일</td>	
 		<td class="ct_line02"></td>
 		<td class="ct_list_b">현재상태</td>	
+		<td class="ct_line02"></td>
+		<td class="ct_list_b">판매관리</td>	
 	</tr>
 	<tr>
 		<td colspan="11" bgcolor="808285" height="1"></td>
 	</tr>
 	<c:set var="i" value="0" />
-	<c:forEach var="product" items="${list}">
+	<c:forEach var="purchase" items="${list}">
 		<c:set var="i" value="${i+1}"/>
 
 	<tr class="ct_list_pop">
 		<td align="center">${ i }</td>
 			<td></td>
-			<td align="left"><a href="/product/getProduct?prodNo=${ product.prodNo }">${ product.prodName }</a></td>
+			<td align="left"><a href="/product/getProduct?prodNo=${ purchase.purchaseProd.prodNo }">${ purchase.prodName }</a></td>
 			<td></td>
-			<td align="left">${ product.price }</td>
+			<td align="left">${ purchase.price }</td>
 			<td></td>
-			<td align="left">${ product.regDate }</td>
+			<td align="left">${ purchase.orderDate }</td>
 			<td></td>
 		<td align="left">현재
 				
@@ -122,7 +124,7 @@
 		<c:if test = "${purchase.tranCode=='001'}">
 		
 		<td align="left">
-		<a href="/purchase/updateTranCode?TranCode=${purchase.tranCode}&tranNo=${purchase.tranNo}">배송시작</a>
+		<a href="/purchase/updateTranCodeByProd?tranCode=${purchase.tranCode}&tranNo=${purchase.tranNo}">배송시작</a>
 		</td>
 		</c:if>
 		

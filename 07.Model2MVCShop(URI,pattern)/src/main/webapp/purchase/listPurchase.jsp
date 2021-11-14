@@ -77,8 +77,6 @@
 		<td class="ct_list_b" width="150">회원명</td>
 		<td class="ct_line02"></td>
 		<td class="ct_list_b">전화번호</td>
-		
-		
 		<td class="ct_line02"></td>
 		<td class="ct_list_b">배송현황</td>
 		<td class="ct_line02"></td>
@@ -130,7 +128,7 @@
 		<c:if test = "${purchase.tranCode=='002'}">
 		
 		<td align="left">
-		<a href="/purchase/updateTranCode?TranCode=${purchase.tranCode}&tranNo=${purchase.tranNo}">물건도착</a>
+		<a href="/purchase/updateTranCode?tranCode=${purchase.tranCode}&tranNo=${purchase.tranNo}">물건도착</a>
 		</td>
 		</c:if>
 		
